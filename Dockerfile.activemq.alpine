@@ -1,0 +1,19 @@
+FROM alpine
+RUN apk add tzdata curl
+ENV TZ=Asia/Dubai
+ENV version=5.16.5
+
+RUN apk --no-cache add openjdk11 --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community
+RUN addgroup -S activemq && adduser -S activemq -G activemq
+RUN curl -s -S http://archive.apache.org/dist/activemq/$version/apache-activemq-$version-bin.tar.gz | tar -xzv -C /opt/ && mv /opt/apache-activemq* /opt/activemq
+RUN sed -i 's#<property name="host" value="127.0.0.1"/>#<property name="host" value="0.0.0.0"/>#' /opt/activemq/conf/jetty.xml
+RUN chown -R activemq:activemq /opt/activemq/
+
+USER activemq 
+WORKDIR /opt/activemq/bin
+
+EXPOSE 1883 5672 8161 61613 61614 61616
+ENTRYPOINT ["./activemq","console"]
+
+
+
