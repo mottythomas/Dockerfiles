@@ -1,0 +1,11 @@
+FROM ubuntu:20.04
+RUN apt-get  -y update && apt-get -y upgrade && apt -y install tzdata
+ENV TZ=Asia/Dubai
+
+RUN useradd -ms /bin/bash bayauser
+RUN mkdir -p /usr/local/java/jre1.8.0_144
+ADD jre1.8.0_144 /usr/local/java/jre1.8.0_144
+RUN update-alternatives --install /usr/bin/java java /usr/local/java/jre1.8.0_144/bin/java 1
+
+ENV JAVA_HOME=/usr/local/java/jre1.8.0_144/
+
